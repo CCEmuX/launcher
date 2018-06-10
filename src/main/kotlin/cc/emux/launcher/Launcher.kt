@@ -13,6 +13,7 @@ import java.util.jar.JarFile
 import javax.imageio.ImageIO
 import javax.swing.JOptionPane
 import javax.swing.UIManager
+import kotlin.concurrent.thread
 
 /** CCEmuX data dir */
 val dataDir by lazy {
@@ -99,8 +100,7 @@ fun main(args: Array<String>) {
 	val classLoader = URLClassLoader(arrayOf(emuJar.toUri().toURL()))
 	val mainMethod = classLoader.loadClass(mainClassName).getDeclaredMethod("main", arrayOf<String>()::class.java)
 
-	val emuThread = Thread { mainMethod.invoke(null, arrayOf<String>()) }
-	emuThread.contextClassLoader = classLoader
+	val emuThread = thread(false, contextClassLoader = classLoader) { mainMethod.invoke(null, arrayOf<String>()) }
 	emuThread.setUncaughtExceptionHandler { t, e ->
 		e.printStackTrace()
 		JOptionPane.showMessageDialog(
@@ -112,8 +112,8 @@ fun main(args: Array<String>) {
 	}
 
 	// setup update checker thread
-	val updateThread = Thread {
-		if (updater == null) return@Thread
+	val updateThread = thread(false) {
+		if (updater == null) return@thread
 
 		val trayIcon = if (SystemTray.isSupported()) {
 			TrayIcon(ImageIO.read(Updater::class.java.getResource("/tray.png")), "CCEmuX Updater").also {
