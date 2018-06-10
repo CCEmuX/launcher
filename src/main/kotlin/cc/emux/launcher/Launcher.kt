@@ -12,6 +12,7 @@ import java.nio.file.Paths
 import java.util.jar.JarFile
 import javax.imageio.ImageIO
 import javax.swing.JOptionPane
+import javax.swing.UIManager
 
 /** CCEmuX data dir */
 val dataDir by lazy {
@@ -50,6 +51,8 @@ fun getVersionJar(version: EmuVersion) = dataDir.resolve("versions").resolve(ver
 
 fun main(args: Array<String>) {
 	println("Starting CCEmuX launcher")
+
+	UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 
 	val updater = LauncherConfig.updateSite?.let(::URI)?.let(::Updater)
 
@@ -132,7 +135,7 @@ fun main(args: Array<String>) {
 			if (updater.downloadVersion(latestVersion, getVersionJar(latestVersion))) {
 				LauncherConfig.version = latestHash
 				println("Update applied")
-				trayIcon?.toolTip = "CCEmuX update complete"
+				trayIcon?.toolTip = "CCEmuX update complete - restart to apply"
 
 				trayIcon?.displayMessage(
 						"CCEmuX updated",
