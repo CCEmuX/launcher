@@ -100,7 +100,7 @@ fun main(args: Array<String>) {
 	val classLoader = URLClassLoader(arrayOf(emuJar.toUri().toURL()))
 	val mainMethod = classLoader.loadClass(mainClassName).getDeclaredMethod("main", arrayOf<String>()::class.java)
 
-	val emuThread = thread(false, contextClassLoader = classLoader) { mainMethod.invoke(null, arrayOf<String>()) }
+	val emuThread = thread(false, contextClassLoader = classLoader) { mainMethod.invoke(null, args) }
 	emuThread.setUncaughtExceptionHandler { t, e ->
 		e.printStackTrace()
 		JOptionPane.showMessageDialog(
