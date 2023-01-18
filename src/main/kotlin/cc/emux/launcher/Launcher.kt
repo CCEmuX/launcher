@@ -2,7 +2,6 @@
 
 package cc.emux.launcher
 
-import java.awt.Image
 import java.awt.SystemTray
 import java.awt.TrayIcon
 import java.net.URI
@@ -101,7 +100,7 @@ fun main(args: Array<String>) {
 	val mainMethod = classLoader.loadClass(mainClassName).getDeclaredMethod("main", arrayOf<String>()::class.java)
 
 	val emuThread = thread(false, contextClassLoader = classLoader) { mainMethod.invoke(null, args) }
-	emuThread.setUncaughtExceptionHandler { t, e ->
+	emuThread.setUncaughtExceptionHandler { _, e ->
 		e.printStackTrace()
 		JOptionPane.showMessageDialog(
 				null,
